@@ -398,10 +398,12 @@ function estaInstaladoIos() {
 
 export function setViewportHeight() {
   const root = document.documentElement;
-  if (estaInstaladoIos()) {
-    // A viewport do PWA iOS termina antes da área do indicador. Como a barra já
-    // reserva esse safe area, estendemos o shell pelo mesmo inset para não contá-lo
-    // duas vezes e deixar uma faixa preta sob a navegação.
+  const iosStandalone = estaInstaladoIos();
+  root.classList.toggle('ios-standalone', iosStandalone);
+  if (iosStandalone) {
+    // No app adicionado à Tela de Início, a viewport do iOS termina antes da
+    // borda física. Estenda o shell até ela; o CSS posiciona a barra com margem
+    // visual curta, como na referência da Wise.
     root.style.setProperty('--h', 'calc(100dvh + env(safe-area-inset-bottom, 0px))');
     return;
   }
