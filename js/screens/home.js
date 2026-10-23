@@ -60,7 +60,6 @@ export const screens = {
         </div>
 
         <div class="total">
-          <div class="label">Saldo de referência da conta selecionada</div>
           <div class="total-line">
             <span class="value num">${hidden ? `${symbol()} ••••••` : fmt(accountBalance, display)}</span>
             <button class="disc-btn" data-action="eye" aria-label="Mostrar ou ocultar valores">${icon(isRevealed() ? 'eye-off' : 'eye')}</button>
@@ -84,7 +83,7 @@ export const screens = {
           </button>
           <div class="wallet-body">
             <button class="wallet-head" data-go="statement">
-              <span class="wh-main"><span class="wallet-title">Conta em ${display === 'EUR' ? 'euros (teste)' : 'reais'}</span><span class="wallet-sub num">${raw(accountBalance, display)}</span></span>
+              <span class="wh-main"><span class="wallet-title">Conta em ${display === 'EUR' ? 'euros' : 'reais'}</span><span class="wallet-sub num">${raw(accountBalance, display)}</span></span>
               ${icon('chevron')}
             </button>
             <div class="accts">
@@ -95,7 +94,7 @@ export const screens = {
               </button>
               <button class="acct" data-go="eur">
                 <span class="flag band">${bandeira('EUR')}</span>
-                <span class="a-main"><span class="a-name">Saldo de referência (teste)</span><span class="a-val num">${raw(s.accounts.eur.cashCents, 'EUR')}</span></span>
+                <span class="a-main"><span class="a-val num">${raw(s.accounts.eur.cashCents, 'EUR')}</span></span>
                 ${icon('chevron', 'go')}
               </button>
               <button class="acct" data-go="card">

@@ -21,7 +21,7 @@ export const screens = {
       return `
       <div class="scroll">
         <div class="balance-card">
-          <div class="label">Saldo de referência em euro (teste)</div>
+          <div class="label">Saldo em euro</div>
           <div class="value num">${balanceHidden() ? '€ ••••••' : esc(fmt(eur, 'EUR'))}</div>
           <div class="sub num">${balanceHidden() ? '' : `${esc(fmt(convert(eur, q.ref, 'EUR', 'BRL'), 'BRL'))} pela cotação de ${new Date(q.updatedAt).toLocaleDateString('pt-BR')}`}</div>
           <div class="meta"><span>IBAN ${esc(ibanMasked(s.accounts.eur.iban))}</span></div>

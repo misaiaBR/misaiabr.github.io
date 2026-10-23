@@ -107,7 +107,7 @@ function openStatementExport() {
           <div class="field"><label for="statement-from">Data inicial</label><input id="statement-from" type="date" value="${dateInputValue(defaultFrom)}" max="${todayValue}"></div>
           <div class="field"><label for="statement-to">Data final</label><input id="statement-to" type="date" value="${todayValue}" max="${todayValue}"></div>
         </div>
-        <div class="field-hint">Os saldos deste app são valores de referência de teste, não consultados em conta bancária. O PDF será identificado como documento de referência.</div>
+        <div class="field-hint">Os saldos deste app são valores de referência, não consultados em conta bancária. O PDF será identificado como documento de referência.</div>
         <button class="btn primary" type="button" data-create-statement>${icon('download')} Gerar extrato PDF</button>
       </div>
     </div>`);
@@ -140,7 +140,7 @@ function openStatementExport() {
       reference: createStatementReference(),
     });
     const blob = new Blob([pdf], { type: 'application/pdf' });
-    const file = new File([blob], `ipe-referencia-teste-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });
+    const file = new File([blob], `ipe-referencia-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });
     let sharePromise = null;
     try {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
