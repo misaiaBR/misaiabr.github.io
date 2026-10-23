@@ -385,8 +385,20 @@ function installBackGesture() {
   shell.app.addEventListener('pointercancel', finish);
 }
 
+/** No app instalado, o iOS devolve `innerHeight` descontando a faixa do indicador da
+ *  casa: com a altura fixada nisso, sobrava uma faixa preta embaixo da barra de abas —
+ *  só no ícone da Tela de Início, nunca no Safari. Ali quem manda é o `100dvh` do CSS. */
+function estaInstalado() {
+  return Boolean(window.matchMedia?.('(display-mode: standalone)')?.matches) || navigator.standalone === true;
+}
+
 export function setViewportHeight() {
-  document.documentElement.style.setProperty('--h', `${window.innerHeight}px`);
+  const root = document.documentElement;
+  if (estaInstalado()) {
+    root.style.removeProperty('--h');
+    return;
+  }
+  root.style.setProperty('--h', `${window.innerHeight}px`);
 }
 
 export function start() {

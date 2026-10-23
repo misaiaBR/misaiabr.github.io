@@ -32,9 +32,9 @@
   --tab-h: 56px;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
-  /* a barra flutuante fica a 16 px da borda de baixo — o indicador da casa mora nessa
-     faixa, como nas barras flutuantes do iOS; não é vão vazio, é a margem da pílula */
-  --bar-gap: max(16px, calc(var(--sab) - 18px));
+  /* a barra flutuante fica a 10 px da borda de baixo — o indicador da casa encosta nessa
+     margem; é a distância da pílula, não um vão vazio de área segura */
+  --bar-gap: 10px;
   --h: 100dvh;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-pop: 0 24px 60px rgba(0, 0, 0, 0.28);

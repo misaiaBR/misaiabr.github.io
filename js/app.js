@@ -76,12 +76,23 @@ function watchNetwork() {
 
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  // quando um service worker novo assume, o documento em memória ainda é o pacote velho.
+  // No iOS o app instalado sobrevive ao fechar, então a atualização só entrava na terceira
+  // abertura. Recarregar uma vez na troca de controle faz a primeira abertura já mostrar a
+  // versão nova; o estado da conta está no aparelho e não é perdido com o reload.
+  let dono = navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (dono === navigator.serviceWorker.controller) return;
+    dono = navigator.serviceWorker.controller;
+    window.location.reload();
+  });
   navigator.serviceWorker.register('/sw.js', { scope: '/' }).then((reg) => {
     reg.addEventListener('updatefound', () => {
       const sw = reg.installing;
       sw?.addEventListener('statechange', () => {
         if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-          toast('Nova versão disponível. Feche e abra o app de novo.', 4000);
+          // o sw já pula para ativado sozinho; o listener acima cuida do resto
+          sw.postMessage && reg.waiting && reg.waiting.postMessage('skipWaiting');
         }
       });
     });
