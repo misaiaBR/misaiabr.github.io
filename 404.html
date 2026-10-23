@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Ipê Banco Digital</title>
+  <meta name="description" content="Aplicativo de banco digital para iPhone: Pix, boleto, cartão, caixinhas e conta em euro. Funciona offline, sem servidor e sem banco de dados.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#f2f2f7">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- O endereço do app é sempre /contas/conta-corrente/, antes de qualquer coisa carregar. -->
+  <script>
+    (function () {
+      var p = '/contas/conta-corrente/';
+      var local = ['127.0.0.1', 'localhost', '0.0.0.0'].indexOf(location.hostname) !== -1;
+      if (local || location.protocol === 'file:') return;
+      if (location.pathname.replace(/\/+$/, '') === p.replace(/\/+$/, '')) return;
+      try { history.replaceState(null, '', p + location.search + location.hash); } catch (e) {}
+    })();
+  </script>
+
+  <!-- Instalação no iPhone: Safari > Compartilhar > Adicionar à Tela de Início -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Ipê Banco">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <!-- Tela de abertura no iPhone 12 Pro Max (428x926 @3x) -->
+  <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash-1284x2778.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) and (prefers-color-scheme: dark)" href="/assets/splash-dark-1284x2778.png">
+
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div id="app"></div>
+  <div id="layers"></div>
+  <div class="boot" id="boot">
+    <svg viewBox="0 0 64 64" class="mark" aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="#ffbf00"/>
+      <g fill="#0a5738">
+        <path d="M32 15c4.6 4.4 4.6 11 0 15.4C27.4 26 27.4 19.4 32 15z"/>
+        <path d="M20 26c6.2 2 9.8 7.6 8.6 13.6-6.2-2-9.8-7.6-8.6-13.6z"/>
+        <path d="M44 26c-6.2 2-9.8 7.6-8.6 13.6 6.2-2 9.8-7.6 8.6-13.6z"/>
+      </g>
+      <path d="M32 30v18" stroke="#0a5738" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+    </svg>
+    <small>Ipê Banco Digital</small>
+  </div>
+
+  <!-- Gerador de QR local; o leitor (jsQR) só é baixado ao abrir a câmera -->
+  <script src="/js/vendor/qrcode.js" defer></script>
+  <script type="module" src="/js/app.js"></script>
+  <noscript>Este app precisa de JavaScript. No iPhone, abra em Safari com JavaScript ativado.</noscript>
+</body>
+</html>

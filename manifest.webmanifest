@@ -1,0 +1,28 @@
+{
+  "name": "Ipê Banco Digital",
+  "short_name": "Ipê Banco",
+  "description": "App de banco digital para iPhone: Pix, boleto, cartão, caixinhas e conta em euro, funcionando offline.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/contas/conta-corrente/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
+  "orientation": "portrait",
+  "background_color": "#0a5738",
+  "theme_color": "#f2f2f7",
+  "apple_web_app": {
+    "start_url": "/contas/conta-corrente/",
+    "status_bar_style": "default",
+    "title": "Ipê Banco"
+  },
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Pix copia e cola", "short_name": "Copia e cola", "url": "/contas/conta-corrente/?flow=copy-paste" },
+    { "name": "Pagar boleto", "short_name": "Boleto", "url": "/contas/conta-corrente/?flow=boleto" }
+  ]
+}
