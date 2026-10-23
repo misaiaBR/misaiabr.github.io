@@ -26,11 +26,11 @@ function pdfText(value) {
   return `(${result})`;
 }
 
-function text(x, y, value, size = 9, font = 'F1', color = '22262a') {
+function text(x, y, value, size = 9, font = 'F1', color = '000000') {
   return `BT ${rgb(color)} rg /${font} ${num(size)} Tf 1 0 0 1 ${num(x)} ${num(y)} Tm ${pdfText(value)} Tj ET\n`;
 }
 
-function rightText(right, y, value, size = 8.3, font = 'F1', color = '22262a') {
+function rightText(right, y, value, size = 8.3, font = 'F1', color = '000000') {
   return text(right - String(value).length * size * 0.51, y, value, size, font, color);
 }
 
@@ -105,12 +105,12 @@ function shorten(value, max = 43) {
 
 function tableHeader(y) {
   let c = line(LEFT, y + 12, RIGHT, y + 12, 'dfe3e5', 0.6);
-  c += text(LEFT + 5, y, 'FECHA', 6.8, 'F2', '52615a');
-  c += text(LEFT + 58, y, 'FECHA VALOR', 6.8, 'F2', '52615a');
-  c += text(LEFT + 130, y, 'DESCRIPCIÓN', 6.8, 'F2', '52615a');
-  c += rightText(421, y, 'ABONO', 6.8, 'F2', '52615a');
-  c += rightText(485, y, 'CARGO', 6.8, 'F2', '52615a');
-  c += rightText(RIGHT - 5, y, 'SALDO', 6.8, 'F2', '52615a');
+  c += text(LEFT + 5, y, 'FECHA', 6.8, 'F2', '000000');
+  c += text(LEFT + 58, y, 'FECHA VALOR', 6.8, 'F2', '000000');
+  c += text(LEFT + 130, y, 'DESCRIPCIÓN', 6.8, 'F2', '000000');
+  c += rightText(421, y, 'ABONO', 6.8, 'F2', '000000');
+  c += rightText(485, y, 'CARGO', 6.8, 'F2', '000000');
+  c += rightText(RIGHT - 5, y, 'SALDO', 6.8, 'F2', '000000');
   c += line(LEFT, y - 7, RIGHT, y - 7, 'dfe3e5', 0.6);
   return c;
 }
@@ -120,31 +120,31 @@ function pageHeader({ pageIndex, currency, from, to, holder, account, bank, addr
   let tableY;
   if (pageIndex === 0) {
     c += logo(LEFT, 800);
-    c += text(LEFT + 43, 826, bank, 12, 'F2', '0a5738');
+    c += text(LEFT + 43, 826, bank, 12, 'F2', '000000');
     (address || []).forEach((addressLine, index) => {
-      c += text(LEFT, 788 - index * 11, addressLine, 6.7, 'F1', '58635e');
+      c += text(LEFT, 788 - index * 11, addressLine, 6.7, 'F1', '000000');
     });
-    c += rightText(RIGHT, 822, `Extracto en ${currency}`, 9, 'F2', '0a5738');
-    c += rightText(RIGHT, 804, periodLabel(from, to), 7.2, 'F1', '58635e');
-    c += rightText(RIGHT, 788, `Emitido el ${localDate(new Date(), { day: 'numeric', month: 'long', year: 'numeric' })} [GMT-03:00]`, 7.2, 'F1', '58635e');
+    c += rightText(RIGHT, 822, `Extracto en ${currency}`, 9, 'F2', '000000');
+    c += rightText(RIGHT, 804, periodLabel(from, to), 7.2, 'F1', '000000');
+    c += rightText(RIGHT, 788, `Emitido el ${localDate(new Date(), { day: 'numeric', month: 'long', year: 'numeric' })} [GMT-03:00]`, 7.2, 'F1', '000000');
     c += line(LEFT, 741, RIGHT, 741, 'dfe3e5', 0.8);
 
-    c += text(LEFT, 715, 'TITULAR', 6.8, 'F2', '68736e');
-    c += text(LEFT, 698, holder, 10, 'F2', '22262a');
-    c += text(LEFT, 676, currency === 'EUR' ? 'IBAN' : 'CUENTA', 6.8, 'F2', '68736e');
-    c += text(LEFT, 659, account, 8.4, 'F1', '22262a');
+    c += text(LEFT, 715, 'TITULAR', 6.8, 'F2', '000000');
+    c += text(LEFT, 698, holder, 10, 'F2', '000000');
+    c += text(LEFT, 676, currency === 'EUR' ? 'IBAN' : 'CUENTA', 6.8, 'F2', '000000');
+    c += text(LEFT, 659, account, 8.4, 'F1', '000000');
     if (currency === 'EUR' && bic) {
-      c += text(LEFT, 639, 'BIC / SWIFT', 6.8, 'F2', '68736e');
-      c += text(LEFT, 623, bic, 8.4, 'F1', '22262a');
+      c += text(LEFT, 639, 'BIC / SWIFT', 6.8, 'F2', '000000');
+      c += text(LEFT, 623, bic, 8.4, 'F1', '000000');
     }
-    c += text(RIGHT - 153, 715, 'MONEDA', 6.8, 'F2', '68736e');
-    c += text(RIGHT - 153, 698, currency, 8.4, 'F1', '22262a');
+    c += text(RIGHT - 153, 715, 'MONEDA', 6.8, 'F2', '000000');
+    c += text(RIGHT - 153, 698, currency, 8.4, 'F1', '000000');
     tableY = 492;
   } else {
     c += logo(LEFT, 788);
-    c += text(LEFT + 43, 814, bank, 10, 'F2', '0a5738');
-    c += text(LEFT + 43, 799, `EXTRACTO EN ${currency}  ·  ${periodLabel(from, to)}`, 7.6, 'F1', '58635e');
-    c += rightText(RIGHT, 806, holder, 8.2, 'F1', '58635e');
+    c += text(LEFT + 43, 814, bank, 10, 'F2', '000000');
+    c += text(LEFT + 43, 799, `EXTRACTO EN ${currency}  ·  ${periodLabel(from, to)}`, 7.6, 'F1', '000000');
+    c += rightText(RIGHT, 806, holder, 8.2, 'F1', '000000');
     c += line(LEFT, 778, RIGHT, 778, 'dfe3e5', 0.8);
     tableY = 752;
   }
@@ -164,9 +164,9 @@ function summary({ opening, credits, debits, closing, currency }) {
   let c = '';
   items.forEach(([label, value], index) => {
     const x = LEFT + index * (width + gap);
-    c += line(x, 585, x + width, 585, index === 3 ? '0a5738' : 'dfe3e5', index === 3 ? 1.6 : 0.8);
-    c += text(x, 569, label, 6.6, 'F2', '68736e');
-    c += text(x, 550, value, 8.8, 'F2', index === 3 ? '0a5738' : '22262a');
+    c += line(x, 585, x + width, 585, 'dfe3e5', 0.8);
+    c += text(x, 569, label, 6.6, 'F2', '000000');
+    c += text(x, 550, value, 8.8, 'F2');
   });
   return c;
 }
@@ -204,7 +204,7 @@ export function buildStatementPdf({ rows, currency, from, to, opening, credits, 
   let page = pageHeader({ pageIndex, currency, from, to, holder, account, bank, address, bic });
   let content = page.content + summary({ opening, credits, debits, closing, currency });
   let y = page.rowY;
-  if (!rows.length) content += text(LEFT + 5, y, 'No hay movimientos durante este período.', 9, 'F1', '68736e');
+  if (!rows.length) content += text(LEFT + 5, y, 'No hay movimientos durante este período.', 9, 'F1', '000000');
   rows.forEach((row) => {
     if (y < 67) {
       pages.push(content);
@@ -217,21 +217,21 @@ export function buildStatementPdf({ rows, currency, from, to, opening, credits, 
     const valueDate = localDate(row.valueDate || row.at);
     const description = shorten([translateMovement(row.title), translateMovement(row.subtitle)].filter(Boolean).join(' · '));
     const amount = fmt(Math.abs(row.signedCents), currency);
-    content += text(LEFT + 5, y, date, 7.2, 'F1', '58635e');
-    content += text(LEFT + 58, y, valueDate, 7.2, 'F1', '58635e');
-    content += text(LEFT + 130, y, description, 7.5, 'F1', '22262a');
-    if (row.signedCents > 0) content += rightText(421, y, amount, 7.2, 'F1', '0a7544');
-    if (row.signedCents < 0) content += rightText(485, y, amount, 7.2, 'F1', 'a43c36');
-    content += rightText(RIGHT - 5, y, fmt(row.balanceCents, currency), 7.6, 'F1', '22262a');
+    content += text(LEFT + 5, y, date, 7.2, 'F1', '000000');
+    content += text(LEFT + 58, y, valueDate, 7.2, 'F1', '000000');
+    content += text(LEFT + 130, y, description, 7.5, 'F1', '000000');
+    if (row.signedCents > 0) content += rightText(421, y, amount, 7.2, 'F1', '000000');
+    if (row.signedCents < 0) content += rightText(485, y, amount, 7.2, 'F1', '000000');
+    content += rightText(RIGHT - 5, y, fmt(row.balanceCents, currency), 7.6, 'F1', '000000');
     content += line(LEFT, y - 7, RIGHT, y - 7, 'e7eae8', 0.35);
     y -= 17;
   });
   pages.push(content);
   pages.forEach((pageContent, index) => {
     pages[index] = pageContent
-      + text(LEFT, 22, `Referencia: ${reference}`, 7.2, 'F1', '68736e')
+      + text(LEFT, 22, `Referencia: ${reference}`, 7.2, 'F1', '000000')
       + line(LEFT, 36, RIGHT, 36, 'dfe3e5', 0.5)
-      + rightText(RIGHT, 22, `Página ${index + 1} / ${pages.length}`, 7.2, 'F1', '68736e');
+      + rightText(RIGHT, 22, `Página ${index + 1} / ${pages.length}`, 7.2, 'F1', '000000');
   });
   return makePdf(pages, bank);
 }
