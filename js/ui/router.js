@@ -400,13 +400,6 @@ export function setViewportHeight() {
   const root = document.documentElement;
   const iosStandalone = estaInstaladoIos();
   root.classList.toggle('ios-standalone', iosStandalone);
-  if (iosStandalone) {
-    // No app adicionado à Tela de Início, a viewport do iOS termina antes da
-    // borda física. Estenda o shell até ela; o CSS posiciona a barra com margem
-    // visual curta, como na referência da Wise.
-    root.style.setProperty('--h', 'calc(100dvh + env(safe-area-inset-bottom, 0px))');
-    return;
-  }
   if (estaInstalado()) {
     root.style.removeProperty('--h');
     return;
