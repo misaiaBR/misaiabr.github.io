@@ -32,9 +32,8 @@
   --tab-h: 56px;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
-  /* a barra flutuante fica a 10 px da borda de baixo — o indicador da casa encosta nessa
-     margem; é a distância da pílula, não um vão vazio de área segura */
-  --bar-gap: 10px;
+  /* A barra termina no limite da área segura, junto ao indicador de início. */
+  --bar-gap: 0px;
   --h: 100dvh;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-pop: 0 24px 60px rgba(0, 0, 0, 0.28);
@@ -880,21 +879,8 @@ input[type="range"]::-webkit-slider-thumb {
 .wh-main { flex: 1; display: flex; flex-direction: column; gap: 1px; }
 .wallet-head > svg { width: 16px; height: 16px; color: var(--text-3); flex: 0 0 16px; }
 
-/* Barra de abas flutuante: reserva a área segura do iPhone e estende a superfície
-   até a borda da tela, evitando a faixa preta sob a pílula. */
+/* Barra flutuante termina no limite da área segura, sem uma faixa adicional abaixo. */
 .tabbar { background: transparent; border-top: 0; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0 20px; align-items: flex-start; }
-.tabbar::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--bar-gap) + var(--sab) + var(--badge-lift, 0px));
-  background: color-mix(in srgb, var(--card) 88%, transparent);
-  backdrop-filter: saturate(180%) blur(22px);
-  -webkit-backdrop-filter: saturate(180%) blur(22px);
-}
 .tabbar { height: calc(var(--tab-h) + var(--bar-gap) + var(--sab) + var(--badge-lift, 0px)); }
 .tabbar::before {
   content: "";
