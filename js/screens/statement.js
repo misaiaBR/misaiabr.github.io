@@ -1,11 +1,12 @@
 // Extrato com busca/filtros e comprovante com ações por tipo de lançamento.
 import { icon } from '../ui/icons.js';
-import { alert, copyText, dayHeading, el, esc, shareText, toast } from '../ui/kit.js';
+import { alert, copyText, dayHeading, el, esc, shareText, sheet, toast } from '../ui/kit.js';
 import * as Router from '../ui/router.js';
 import * as store from '../logic/store.js';
 import { BANK, CATS, FX, txMeta } from '../logic/rules.js';
 import { fmt } from '../logic/money.js';
 import { S, cur, errorText, money, otherHint, show, txRow } from '../ui/shared.js';
+import { buildStatementPdf } from '../ui/statement-pdf.js';
 
 const filter = { cat: 'all', text: '', month: null };
 
@@ -35,6 +36,140 @@ function monthOptions() {
   return Array.from(seen.entries()).sort((a, b) => Number(b[0].split('-')[1]) - Number(a[0].split('-')[1]));
 }
 
+function dateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function readDateInput(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null;
+}
+
+function statementData(currency, from, to) {
+  const start = new Date(from);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(to);
+  end.setHours(0, 0, 0, 0);
+  end.setDate(end.getDate() + 1);
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+  const state = S();
+  const movements = state.tx
+    .filter((tx) => tx.status === 'done' && (tx.currency || 'BRL') === currency && store.signedAmount(tx) !== 0)
+    .map((tx) => ({ tx, at: new Date(tx.at).getTime(), signedCents: store.signedAmount(tx) }))
+    .filter((item) => Number.isFinite(item.at))
+    .sort((a, b) => a.at - b.at);
+  const later = movements.filter((item) => item.at >= endMs).reduce((sum, item) => sum + item.signedCents, 0);
+  const rows = movements.filter((item) => item.at >= startMs && item.at < endMs);
+  const periodNet = rows.reduce((sum, item) => sum + item.signedCents, 0);
+  const closing = Number(state.accounts[currency === 'EUR' ? 'eur' : 'brl'].cashCents) - later;
+  let balance = closing - periodNet;
+  let credits = 0;
+  let debits = 0;
+  const entries = rows.map(({ tx, signedCents }) => {
+    balance += signedCents;
+    if (signedCents > 0) credits += signedCents;
+    else debits += Math.abs(signedCents);
+    return {
+      at: tx.at,
+      valueDate: tx.details?.valueDate || tx.at,
+      title: tx.title || txMeta(tx.type).label,
+      subtitle: tx.subtitle || '',
+      signedCents,
+      balanceCents: balance,
+    };
+  });
+  return { rows: entries, opening: closing - periodNet, credits, debits, closing };
+}
+
+function openStatementExport() {
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const todayValue = dateInputValue(today);
+  const body = el(`
+    <div style="padding:0 16px 8px">
+      <div class="form">
+        <div class="field">
+          <label for="statement-currency">Conta</label>
+          <select id="statement-currency">
+            <option value="BRL">Conta em reais (BRL)</option>
+            <option value="EUR">Conta em euros (EUR)</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field"><label for="statement-from">Data inicial</label><input id="statement-from" type="date" value="${dateInputValue(startOfMonth)}" max="${todayValue}"></div>
+          <div class="field"><label for="statement-to">Data final</label><input id="statement-to" type="date" value="${todayValue}" max="${todayValue}"></div>
+        </div>
+        <div class="field-hint">O PDF usa as movimentações salvas neste aparelho. Documento demonstrativo, não emitido por uma instituição financeira.</div>
+        <button class="btn primary" type="button" data-create-statement>${icon('download')} Gerar extrato PDF</button>
+      </div>
+    </div>`);
+  body.querySelector('#statement-currency').value = cur();
+  const handle = sheet({ title: 'Exportar extrato', body });
+  body.querySelector('[data-create-statement]').addEventListener('click', async () => {
+    const currency = body.querySelector('#statement-currency').value;
+    const from = readDateInput(body.querySelector('#statement-from').value);
+    const to = readDateInput(body.querySelector('#statement-to').value);
+    if (!from || !to || from > to || to > new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+      toast('Confira o período selecionado.');
+      return;
+    }
+
+    const totals = statementData(currency, from, to);
+    const account = currency === 'EUR'
+      ? `IBAN ${S().accounts.eur.iban || BANK.eurIbanDisplay}`
+      : BANK.accountDisplay;
+    const pdf = buildStatementPdf({
+      ...totals,
+      currency,
+      from,
+      to,
+      holder: S().profile.name,
+      account,
+      bank: BANK.short,
+    });
+    const blob = new Blob([pdf], { type: 'application/pdf' });
+    const file = new File([blob], `ipe-extrato-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });
+    let sharePromise = null;
+    try {
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        sharePromise = navigator.share({ files: [file], title: 'Extrato da conta' });
+      }
+    } catch {
+      sharePromise = null;
+    }
+    handle.close();
+    if (sharePromise) {
+      try {
+        await sharePromise;
+      } catch (error) {
+        if (error.name !== 'AbortError') openPdfPreview(blob, file.name);
+      }
+      return;
+    }
+    openPdfPreview(blob, file.name);
+  });
+}
+
+function openPdfPreview(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 5 * 60 * 1000);
+  toast('PDF pronto. No visualizador, use Compartilhar para salvar em Arquivos.', 5000);
+}
+
 export const screens = {
   statement: () => ({
     large: 'Extrato',
@@ -52,6 +187,9 @@ export const screens = {
       });
       return `
       <div class="scroll flush">
+        <div style="padding:0 16px 12px">
+          <button class="btn tonal" data-statement-pdf>${icon('download')} Baixar extrato em PDF</button>
+        </div>
         <div style="padding:0 16px">
           <div class="field" style="margin-bottom:10px">
             <label for="q">${icon('search')} Buscar no extrato</label>
@@ -71,6 +209,7 @@ export const screens = {
       </div>`;
     },
     mount: (node) => {
+      node.querySelector('[data-statement-pdf]')?.addEventListener('click', openStatementExport);
       const host = node.querySelector('[data-groups]');
       const list = S().tx.filter(matches);
       const groups = new Map();
