@@ -94,19 +94,18 @@ export const ICON_NAMES = Object.keys(P);
  * no Windows/Chrome vira só as letras. São os únicos ícones coloridos do app, e as
  * proporções abaixo foram medidas no print que ele mandou, não no brasão oficial.
  */
-/** Estrela de quatro pontas (ponta para cima), circunraio `r`. */
-function estrela4(cx, cy, r) {
-  const i = r * 0.32;
-  const p = (dx, dy) => `${(cx + dx).toFixed(2)} ${(cy + dy).toFixed(2)}`;
-  return `<path d="M${p(0, -r)} L${p(i, -i)} L${p(r, 0)} L${p(i, i)} L${p(0, r)} L${p(-i, i)} L${p(-r, 0)} L${p(-i, -i)}Z"/>`;
-}
-
-/** As doze estrelas da União Europeia, em círculo, todas na mesma posição. */
-function estrelasUE(cx, cy, raioDoCirculo, raioDaEstrela) {
+/** Doze quadrados arredondados em círculo, cada um com uma diagonal apontando para o
+ *  centro — é como a bandeira da União Europeia aparece no app de referência dele. */
+function losangosUE(cx, cy, raioDoCirculo, lado) {
   let g = '';
+  const metade = (-lado / 2).toFixed(2);
   for (let k = 0; k < 12; k += 1) {
-    const ang = -Math.PI / 2 + (k * Math.PI) / 6;
-    g += estrela4(cx + raioDoCirculo * Math.cos(ang), cy + raioDoCirculo * Math.sin(ang), raioDaEstrela);
+    const ang = -90 + k * 30;
+    const rad = (ang * Math.PI) / 180;
+    const x = cx + raioDoCirculo * Math.cos(rad);
+    const y = cy + raioDoCirculo * Math.sin(rad);
+    g += `<rect x="${metade}" y="${metade}" width="${lado}" height="${lado}"`
+      + ` rx="${(lado * 0.22).toFixed(2)}" transform="translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(ang + 45).toFixed(1)})"/>`;
   }
   return g;
 }
@@ -119,10 +118,10 @@ const BANDEIRAS = {
     <path d="M2.6 12 12 5.7 21.4 12 12 18.3z" fill="#fcc300"/>
     <circle cx="12" cy="12" r="4.1" fill="#1f2c7a"/>
     <path d="M8.4 10Q12.2 10.2 16 12.7" fill="none" stroke="#d5daf0" stroke-width="0.55"/>`,
-  // azul-marinho com a borda mais clara e as doze estrelas amarelas em círculo
-  EUR: `<circle cx="12" cy="12" r="11" fill="#2b3a8f"/>
-    <circle cx="12" cy="12" r="10.3" fill="#131c6b"/>
-    <g fill="#f5d32a">${estrelasUE(12, 12, 7.9, 1.2)}</g>`,
+  // azul-marinho com a borda mais clara e as doze marcas douradas em círculo
+  EUR: `<circle cx="12" cy="12" r="11" fill="#4a4e9e"/>
+    <circle cx="12" cy="12" r="10.5" fill="#1a1e72"/>
+    <g fill="#f5ce1e">${losangosUE(12, 12, 8.5, 1.9)}</g>`,
 };
 
 export function bandeira(codigo, cls = '') {
