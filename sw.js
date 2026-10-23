@@ -1,5 +1,5 @@
 // Service worker: instala o app completo e deixa tudo funcionando sem internet.
-const VERSION = 'ipe-banco-1.5.20-2026.10.23-1';
+const VERSION = 'ipe-banco-1.5.21-2026.10.23-1';
 const CACHE = `ipe-${VERSION}`;
 
 const CORE = [
@@ -39,6 +39,7 @@ const CORE = [
   './assets/icon-512.png',
   './assets/maskable-512.png',
   './assets/apple-touch-icon.png',
+  './assets/apple-touch-icon-v2.png',
   './assets/splash-1284x2778.png',
   './assets/splash-dark-1284x2778.png',
 ];
