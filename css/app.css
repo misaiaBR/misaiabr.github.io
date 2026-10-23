@@ -880,17 +880,28 @@ input[type="range"]::-webkit-slider-thumb {
 .wh-main { flex: 1; display: flex; flex-direction: column; gap: 1px; }
 .wallet-head > svg { width: 16px; height: 16px; color: var(--text-3); flex: 0 0 16px; }
 
-/* barra de abas flutuante (iOS 26 / HIG): a pílula fica encostada na área segura de
-   baixo e sobe só o estritamente necessário, medido em --badge-lift por app.js.
-   As abas ocupam exatamente a altura da pílula — a faixa livre abaixo é do aparelho
-   (home indicator / selo do host) e não recebe toque. */
+/* Barra de abas flutuante: reserva a área segura do iPhone e estende a superfície
+   até a borda da tela, evitando a faixa preta sob a pílula. */
 .tabbar { background: transparent; border-top: 0; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0 20px; align-items: flex-start; }
+.tabbar::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--bar-gap) + var(--sab) + var(--badge-lift, 0px));
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+}
+.tabbar { height: calc(var(--tab-h) + var(--bar-gap) + var(--sab) + var(--badge-lift, 0px)); }
 .tabbar::before {
   content: "";
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: calc(var(--bar-gap) + var(--badge-lift, 0px));
+  bottom: calc(var(--bar-gap) + var(--sab) + var(--badge-lift, 0px));
   height: var(--tab-h);
   border-radius: 28px;
   background: color-mix(in srgb, var(--card) 88%, transparent);

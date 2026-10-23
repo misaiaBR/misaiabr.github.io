@@ -112,11 +112,13 @@ function estrelasUE(cx, cy, raioDoCirculo, raioDaEstrela) {
 }
 
 const BANDEIRAS = {
-  // verde vivo, losango amarelo grande de ponta seca, esfera azul pequena e a faixa fina
-  BR: `<circle cx="12" cy="12" r="11" fill="#22a72c"/>
-    <path d="M12 2.6 21.9 12 12 21.4 2.1 12z" fill="#fbd200"/>
-    <circle cx="12" cy="12" r="4.3" fill="#1a3d9c"/>
-    <path d="M8.2 12.9Q12 13.7 15.8 10.6" fill="none" stroke="#fff" stroke-width="0.7"/>`,
+  // medidas tiradas da imagem que ele mandou: losango largo (9,4 x 6,3 de semi-diagonal),
+  // círculo azul pequeno e a faixa branca descendo da esquerda para a direita
+  BR: `<circle cx="12" cy="12" r="11" fill="#4ea51f"/>
+    <circle cx="12" cy="12" r="10.5" fill="#319a0e"/>
+    <path d="M2.6 12 12 5.7 21.4 12 12 18.3z" fill="#fcc300"/>
+    <circle cx="12" cy="12" r="4.1" fill="#1f2c7a"/>
+    <path d="M8.4 10Q12.2 10.2 16 12.7" fill="none" stroke="#d5daf0" stroke-width="0.55"/>`,
   // azul-marinho com a borda mais clara e as doze estrelas amarelas em círculo
   EUR: `<circle cx="12" cy="12" r="11" fill="#2b3a8f"/>
     <circle cx="12" cy="12" r="10.3" fill="#131c6b"/>
