@@ -118,7 +118,7 @@ export const screens = {
     mount: (node) => {
       const s = S();
       const recentHost = node.querySelector('[data-recent]');
-      const recent = s.tx.filter((t) => t.status !== 'failed').slice(0, 5);
+      const recent = s.tx.filter((t) => t.status !== 'failed').slice(0, 8);
       if (!recent.length) {
         recentHost.innerHTML = '<div class="empty">Nenhum lançamento ainda</div>';
       } else {

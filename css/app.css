@@ -205,6 +205,8 @@ svg { display: block; }
   padding: 0 var(--pad) calc(28px + var(--sab));
   overscroll-behavior: contain;
 }
+.home2 { scrollbar-width: none; }
+.home2::-webkit-scrollbar { display: none; }
 .scroll.flush { padding-left: 0; padding-right: 0; }
 /* tela sem barra de navegação: o título grande é a primeira coisa da tela e precisa
    descer abaixo do relógio/status bar do iOS */
