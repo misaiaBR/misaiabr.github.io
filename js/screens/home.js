@@ -5,7 +5,7 @@ import * as Router from '../ui/router.js';
 import * as store from '../logic/store.js';
 import { fmt } from '../logic/money.js';
 import { brandOf } from '../logic/card.js';
-import { S, balanceHidden, bothCurrencies, conv, cur, isRevealed, setRevealed, symbol, txRow } from '../ui/shared.js';
+import { S, balanceHidden, bothCurrencies, cur, isRevealed, setRevealed, symbol, txRow } from '../ui/shared.js';
 
 const TAB_ROOT = ['home', 'statement', 'pix', 'card', 'profile'];
 
@@ -46,7 +46,7 @@ export const screens = {
       const unread = s.notifications.filter((n) => !n.read).length;
       const hidden = balanceHidden();
       const raw = (cents, c) => (hidden ? `•••• ${c}` : fmt(cents, c));
-      const total = conv(s.accounts.brl.cashCents, 'BRL') + conv(s.accounts.eur.cashCents, 'EUR');
+      const accountBalance = display === 'EUR' ? s.accounts.eur.cashCents : s.accounts.brl.cashCents;
       return `
       <div class="scroll home2">
         <div class="hero">
@@ -60,9 +60,9 @@ export const screens = {
         </div>
 
         <div class="total">
-          <div class="label">Saldo total</div>
+          <div class="label">Saldo de referência da conta selecionada</div>
           <div class="total-line">
-            <span class="value num">${hidden ? `${symbol()} ••••••` : fmt(total, display)}</span>
+            <span class="value num">${hidden ? `${symbol()} ••••••` : fmt(accountBalance, display)}</span>
             <button class="disc-btn" data-action="eye" aria-label="Mostrar ou ocultar valores">${icon(isRevealed() ? 'eye-off' : 'eye')}</button>
             <button class="disc-btn" data-go="statement" aria-label="Ver extrato">${icon('gauge')}</button>
             <span class="cur-toggle" role="tablist" aria-label="Moeda de exibição">
@@ -84,7 +84,7 @@ export const screens = {
           </button>
           <div class="wallet-body">
             <button class="wallet-head" data-go="statement">
-              <span class="wh-main"><span class="wallet-title">Conta dia a dia</span><span class="wallet-sub num">${raw(total, display)}</span></span>
+              <span class="wh-main"><span class="wallet-title">Conta em ${display === 'EUR' ? 'euros (teste)' : 'reais'}</span><span class="wallet-sub num">${raw(accountBalance, display)}</span></span>
               ${icon('chevron')}
             </button>
             <div class="accts">
@@ -95,7 +95,7 @@ export const screens = {
               </button>
               <button class="acct" data-go="eur">
                 <span class="flag band">${bandeira('EUR')}</span>
-                <span class="a-val num">${raw(s.accounts.eur.cashCents, 'EUR')}</span>
+                <span class="a-main"><span class="a-name">Saldo de referência (teste)</span><span class="a-val num">${raw(s.accounts.eur.cashCents, 'EUR')}</span></span>
                 ${icon('chevron', 'go')}
               </button>
               <button class="acct" data-go="card">

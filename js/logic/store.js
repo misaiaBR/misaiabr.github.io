@@ -16,10 +16,10 @@ import {
 const STATE_KEY = 'ipe.bank.state.v1';
 const DEVICE_KEY = 'ipe.bank.device.v1';
 const ATTEMPTS_KEY = 'ipe.bank.attempts.v1';
-export const SCHEMA = 6;
+export const SCHEMA = 7;
 
-/** Saldo da conta em euro: € 2.568,00 — independente do saldo em reais. */
-export const DEMO_EUR_CENTS = 256_800;
+/** Saldo de referência para testes em euro: € 2.886,57 — não vem de integração bancária. */
+export const DEMO_EUR_CENTS = 288_657;
 /** Saldo da conta em reais: R$ 1.798,00 — não é conversão do euro. */
 export const DEMO_BRL_CENTS = 179_800;
 
@@ -124,6 +124,7 @@ function migrate(stored) {
   if (state.schema === 3) state = migrateV3(state);
   if (state.schema === 4) state = migrateV4(state);
   if (state.schema === 5) state = migrateV5(state);
+  if (state.schema === 6) state = migrateV6(state);
   return state.schema === SCHEMA ? state : provision(seed(emptyState()));
 }
 
@@ -206,10 +207,18 @@ function migrateV4(stored) {
  * senha, nome, extrato, caixinhas e o que ele mexeu ficam como estão.
  */
 function migrateV5(stored) {
-  const state = { ...emptyState(), ...stored, schema: SCHEMA };
+  const state = { ...emptyState(), ...stored, schema: 6 };
   state.accounts = { ...emptyState().accounts, ...stored.accounts };
   state.card = { ...emptyState().card, ...stored.card };
   applyCardDemoSetup(state);
+  setCash(state, 'EUR', 256_800);
+  return state;
+}
+
+/** v6 -> v7: alinha o saldo EUR de referência de teste em todas as telas. */
+function migrateV6(stored) {
+  const state = { ...emptyState(), ...stored, schema: SCHEMA };
+  state.accounts = { ...emptyState().accounts, ...stored.accounts };
   setCash(state, 'EUR', DEMO_EUR_CENTS);
   return state;
 }

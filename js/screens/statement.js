@@ -74,12 +74,8 @@ function statementData(currency, from, to) {
   const periodNet = rows.reduce((sum, item) => sum + item.signedCents, 0);
   const closing = Number(state.accounts[currency === 'EUR' ? 'eur' : 'brl'].cashCents) - later;
   let balance = closing - periodNet;
-  let credits = 0;
-  let debits = 0;
   const entries = rows.map(({ tx, signedCents }) => {
     balance += signedCents;
-    if (signedCents > 0) credits += signedCents;
-    else debits += Math.abs(signedCents);
     return {
       at: tx.at,
       valueDate: tx.details?.valueDate || tx.at,
@@ -89,12 +85,13 @@ function statementData(currency, from, to) {
       balanceCents: balance,
     };
   });
-  return { rows: entries, opening: closing - periodNet, credits, debits, closing };
+  return { rows: entries, closing };
 }
 
 function openStatementExport() {
   const today = new Date();
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const defaultFrom = new Date(today);
+  defaultFrom.setDate(defaultFrom.getDate() - 1);
   const todayValue = dateInputValue(today);
   const body = el(`
     <div style="padding:0 16px 8px">
@@ -107,10 +104,10 @@ function openStatementExport() {
           </select>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="field"><label for="statement-from">Data inicial</label><input id="statement-from" type="date" value="${dateInputValue(startOfMonth)}" max="${todayValue}"></div>
+          <div class="field"><label for="statement-from">Data inicial</label><input id="statement-from" type="date" value="${dateInputValue(defaultFrom)}" max="${todayValue}"></div>
           <div class="field"><label for="statement-to">Data final</label><input id="statement-to" type="date" value="${todayValue}" max="${todayValue}"></div>
         </div>
-        <div class="field-hint">O PDF inclui as movimentações e os dados da conta salvos neste aparelho.</div>
+        <div class="field-hint">Os saldos deste app são valores de referência de teste, não consultados em conta bancária. O PDF será identificado como documento de referência.</div>
         <button class="btn primary" type="button" data-create-statement>${icon('download')} Gerar extrato PDF</button>
       </div>
     </div>`);
@@ -135,14 +132,15 @@ function openStatementExport() {
       from,
       to,
       holder: S().profile.name,
-      account,
+      holderAddress: ['Rua Jos\u00e9 Abel Galv\u00e3o', 'S\u00e3o Paulo', 'SP', '04811190', 'Brazil'],
+      account: currency === 'EUR' ? account.replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim() : account,
       bank: BANK.short,
       address: BANK.address,
-      bic: currency === 'EUR' ? BANK.eurBic : '',
+      bic: currency === 'EUR' ? 'TRWIBEB1XXX' : '',
       reference: createStatementReference(),
     });
     const blob = new Blob([pdf], { type: 'application/pdf' });
-    const file = new File([blob], `ipe-extrato-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });
+    const file = new File([blob], `ipe-referencia-teste-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });
     let sharePromise = null;
     try {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {

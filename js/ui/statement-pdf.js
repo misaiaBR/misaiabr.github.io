@@ -1,5 +1,3 @@
-import { fmt } from '../logic/money.js';
-
 const PAGE_W = 595;
 const PAGE_H = 842;
 const LEFT = 38;
@@ -55,47 +53,66 @@ function localDate(value, options = { day: '2-digit', month: '2-digit', year: 'n
   return date.toLocaleDateString('es-ES', { timeZone: 'America/Sao_Paulo', ...options });
 }
 
-function periodLabel(from, to) {
+function dateWithTimezone(value) {
   const longDate = { day: 'numeric', month: 'long', year: 'numeric' };
-  return `Del ${localDate(from, longDate)} al ${localDate(to, longDate)}`;
+  return `${localDate(value, longDate)} [GMT-03:00]`;
+}
+
+function periodLabel(from, to) {
+  return `${dateWithTimezone(from)} - ${dateWithTimezone(to)}`;
+}
+
+function formatStatementNumber(cents) {
+  const value = Math.abs(Math.trunc(Number(cents) || 0));
+  const whole = String(Math.trunc(value / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const fraction = String(value % 100).padStart(2, '0');
+  return `${whole},${fraction}`;
+}
+
+function formatStatementAmount(cents, currency) {
+  return `${formatStatementNumber(cents)} ${currency}`;
 }
 
 const MOVEMENT_TRANSLATIONS = new Map([
-  ['Depósito em euros', 'Depósito en euros'],
-  ['Depósito recebido', 'Depósito recibido'],
-  ['Aporte na caixinha', 'Ingreso a la cuenta de ahorro'],
-  ['Pagamento da fatura', 'Pago de la factura'],
-  ['Pix enviado', 'Transferencia enviada'],
-  ['Pix recebido', 'Transferencia recibida'],
-  ['Cobrança automática', 'Cargo automático'],
-  ['Pagamento de boleto', 'Pago de recibo'],
-  ['Compra de euros', 'Compra de euros'],
-  ['Entrada de euros', 'Abono en euros'],
-  ['Recarga de celular', 'Recarga de móvil'],
-  ['Compra no crédito', 'Compra con tarjeta'],
-  ['Resgate da caixinha', 'Retiro de la cuenta de ahorro'],
-  ['Salário', 'Salario'],
-  ['Pix agendado', 'Transferencia programada'],
-  ['Recebido de Lisboa', 'Recibido de Lisboa'],
-  ['Fatura deste ciclo quitada', 'Factura de este ciclo pagada'],
-  ['Crédito à vista', 'Pago con tarjeta de crédito'],
-  ['Assinatura', 'Suscripción'],
+  ['deposito em euros', 'Dep\u00f3sito en euros'],
+  ['deposito recebido', 'Dep\u00f3sito recibido'],
+  ['aporte na caixinha', 'Ingreso a cuenta de ahorro'],
+  ['pagamento da fatura', 'Pago de factura'],
+  ['pix enviado', 'Transferencia enviada'],
+  ['pix recebido', 'Transferencia recibida'],
+  ['cobranca automatica', 'Cargo autom\u00e1tico'],
+  ['pagamento de boleto', 'Pago de recibo'],
+  ['compra de euros', 'Compra de euros'],
+  ['entrada de euros', 'Abono en euros'],
+  ['recarga de celular', 'Recarga de m\u00f3vil'],
+  ['compra no credito', 'Compra con tarjeta'],
+  ['resgate da caixinha', 'Retiro de cuenta de ahorro'],
+  ['salario', 'Salario'],
+  ['pix agendado', 'Transferencia programada'],
+  ['recebido de lisboa', 'Recibido de Lisboa'],
+  ['fatura deste ciclo quitada', 'Factura de este ciclo pagada'],
+  ['credito a vista', 'Pago con tarjeta de cr\u00e9dito'],
+  ['assinatura', 'Suscripci\u00f3n'],
 ]);
 
+const MOVEMENT_PREFIX_TRANSLATIONS = [
+  [/^transferencia de /, 'Transferencia de '],
+  [/^recebido de /, 'Recibido de '],
+  [/^saida de /, 'Salida de '],
+  [/^cambio /, 'Cambio '],
+  [/^fatura de /, 'Factura de '],
+  [/^parcelado /, 'Pago a plazos '],
+  [/^mensalidade /, 'Cuota mensual de '],
+];
+
 function translateMovement(value) {
-  const normalized = String(value || '').replace(/\s+/g, ' ').trim();
+  const clean = String(value || '').replace(/\s+/g, ' ').trim();
+  const normalized = clean.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   if (MOVEMENT_TRANSLATIONS.has(normalized)) return MOVEMENT_TRANSLATIONS.get(normalized);
-  const prefixes = [
-    [/^Transferência de /i, 'Transferencia de '],
-    [/^Recebido de /i, 'Recibido de '],
-    [/^Saída de /i, 'Salida de '],
-    [/^Câmbio /i, 'Cambio '],
-    [/^Fatura de /i, 'Factura de '],
-    [/^Parcelado /i, 'Pago a plazos '],
-    [/^Mensalidade /i, 'Cuota mensual de '],
-  ];
-  const translated = prefixes.find(([pattern]) => pattern.test(normalized));
-  return translated ? normalized.replace(translated[0], translated[1]) : normalized;
+  const prefix = MOVEMENT_PREFIX_TRANSLATIONS.find(([pattern]) => pattern.test(normalized));
+  if (!prefix) return clean;
+  const matched = normalized.match(prefix[0])[0];
+  return `${prefix[1]}${clean.slice(matched.length)}`;
 }
 
 function shorten(value, max = 43) {
@@ -103,72 +120,63 @@ function shorten(value, max = 43) {
   return str.length <= max ? str : `${str.slice(0, max - 1).trimEnd()}…`;
 }
 
+const INK = '000000';
+const MUTED = '52615a';
+const RULE = 'dfe3e5';
+
 function tableHeader(y) {
-  let c = line(LEFT, y + 12, RIGHT, y + 12, 'dfe3e5', 0.6);
-  c += text(LEFT + 5, y, 'FECHA', 6.8, 'F2', '000000');
-  c += text(LEFT + 58, y, 'FECHA VALOR', 6.8, 'F2', '000000');
-  c += text(LEFT + 130, y, 'DESCRIPCIÓN', 6.8, 'F2', '000000');
-  c += rightText(421, y, 'ABONO', 6.8, 'F2', '000000');
-  c += rightText(485, y, 'CARGO', 6.8, 'F2', '000000');
-  c += rightText(RIGHT - 5, y, 'SALDO', 6.8, 'F2', '000000');
-  c += line(LEFT, y - 7, RIGHT, y - 7, 'dfe3e5', 0.6);
+  let c = '';
+  c += text(LEFT + 2, y, 'Descripci\u00f3n', 8.2, 'F1', MUTED);
+  c += rightText(421, y, 'Entrante', 8.2, 'F1', MUTED);
+  c += rightText(490, y, 'Saliente', 8.2, 'F1', MUTED);
+  c += rightText(RIGHT - 3, y, 'Saldo', 8.2, 'F1', MUTED);
   return c;
 }
 
-function pageHeader({ pageIndex, currency, from, to, holder, account, bank, address, bic }) {
+function pageHeader({ pageIndex, currency, from, to, holder, holderAddress, account, bank, address, bic, closing }) {
   let c = '';
-  let tableY;
   if (pageIndex === 0) {
-    c += logo(LEFT, 800);
-    c += text(LEFT + 43, 826, bank, 12, 'F2', '000000');
+    c += logo(LEFT, 770);
+    c += text(LEFT + 43, 801, bank, 12, 'F2', INK);
     (address || []).forEach((addressLine, index) => {
-      c += text(LEFT, 788 - index * 11, addressLine, 6.7, 'F1', '000000');
+      c += text(LEFT, 770 - index * 11, addressLine, 7.3, 'F1', MUTED);
     });
-    c += rightText(RIGHT, 822, `Extracto en ${currency}`, 9, 'F2', '000000');
-    c += rightText(RIGHT, 804, periodLabel(from, to), 7.2, 'F1', '000000');
-    c += rightText(RIGHT, 788, `Emitido el ${localDate(new Date(), { day: 'numeric', month: 'long', year: 'numeric' })} [GMT-03:00]`, 7.2, 'F1', '000000');
-    c += line(LEFT, 741, RIGHT, 741, 'dfe3e5', 0.8);
 
-    c += text(LEFT, 715, 'TITULAR', 6.8, 'F2', '000000');
-    c += text(LEFT, 698, holder, 10, 'F2', '000000');
-    c += text(LEFT, 676, currency === 'EUR' ? 'IBAN' : 'CUENTA', 6.8, 'F2', '000000');
-    c += text(LEFT, 659, account, 8.4, 'F1', '000000');
-    if (currency === 'EUR' && bic) {
-      c += text(LEFT, 639, 'BIC / SWIFT', 6.8, 'F2', '000000');
-      c += text(LEFT, 623, bic, 8.4, 'F1', '000000');
-    }
-    c += text(RIGHT - 153, 715, 'MONEDA', 6.8, 'F2', '000000');
-    c += text(RIGHT - 153, 698, currency, 8.4, 'F1', '000000');
-    tableY = 492;
-  } else {
-    c += logo(LEFT, 788);
-    c += text(LEFT + 43, 814, bank, 10, 'F2', '000000');
-    c += text(LEFT + 43, 799, `EXTRACTO EN ${currency}  ·  ${periodLabel(from, to)}`, 7.6, 'F1', '000000');
-    c += rightText(RIGHT, 806, holder, 8.2, 'F1', '000000');
-    c += line(LEFT, 778, RIGHT, 778, 'dfe3e5', 0.8);
-    tableY = 752;
+    c += text(LEFT, 688, 'DOCUMENTO DE PRUEBA · NO ES EXTRACTO BANCARIO', 9, 'F2', INK);
+    c += text(LEFT, 666, `Informe de saldo de referencia en ${currency}`, 18, 'F2', INK);
+    c += text(LEFT, 640, periodLabel(from, to), 10.5, 'F2', INK);
+    c += text(LEFT, 621, `Generado el: ${localDate(new Date(), { day: 'numeric', month: 'long', year: 'numeric' })}`, 8.5, 'F1', MUTED);
+    c += line(LEFT, 601, RIGHT, 601, RULE, 0.7);
+
+    const holderX = LEFT + 2;
+    const ibanX = 302;
+    const bicX = 432;
+    c += text(holderX, 583, 'Titular de la cuenta', 9, 'F2', INK);
+    c += text(ibanX, 583, 'IBAN', 9, 'F2', INK);
+    c += text(bicX, 583, 'Swift/BIC', 9, 'F2', INK);
+    c += text(holderX, 565, holder, 9, 'F2', INK);
+    c += text(ibanX, 565, account, 7.7, 'F1', INK);
+    c += text(bicX, 565, bic, 7.7, 'F1', INK);
+    (holderAddress || []).forEach((addressLine, index) => {
+      c += text(holderX, 553 - index * 14, addressLine, 8.1, 'F1', INK);
+    });
+
+    c += line(LEFT, 490, RIGHT, 490, RULE, 0.7);
+    c += text(LEFT + 2, 466, `Saldo de referencia ${currency} al ${dateWithTimezone(to)}`, 10.5, 'F2', INK);
+    c += rightText(RIGHT, 466, formatStatementAmount(closing, currency), 11.5, 'F2', INK);
+    c += line(LEFT, 455, RIGHT, 455, '777777', 0.55);
+    c += tableHeader(438);
+    return { content: c, rowY: 416 };
   }
-  c += tableHeader(tableY);
-  return { content: c, rowY: tableY - 25 };
-}
 
-function summary({ opening, credits, debits, closing, currency }) {
-  const items = [
-    ['SALDO INICIAL', fmt(opening, currency)],
-    ['ABONOS', fmt(credits, currency)],
-    ['CARGOS', fmt(debits, currency)],
-    ['SALDO FINAL', fmt(closing, currency)],
-  ];
-  const width = 123;
-  const gap = 8;
-  let c = '';
-  items.forEach(([label, value], index) => {
-    const x = LEFT + index * (width + gap);
-    c += line(x, 585, x + width, 585, 'dfe3e5', 0.8);
-    c += text(x, 569, label, 6.6, 'F2', '000000');
-    c += text(x, 550, value, 8.8, 'F2');
-  });
-  return c;
+  c += logo(LEFT, 786);
+  c += text(LEFT + 43, 817, bank, 10, 'F2', INK);
+  c += text(LEFT + 43, 800, `Informe de referencia en ${currency} \u00b7 ${periodLabel(from, to)}`, 7.5, 'F1', MUTED);
+  c += text(LEFT, 770, 'DOCUMENTO DE PRUEBA · NO ES EXTRACTO BANCARIO', 8, 'F2', INK);
+  c += rightText(RIGHT, 805, holder, 8, 'F1', INK);
+  c += line(LEFT, 780, RIGHT, 780, RULE, 0.7);
+  c += tableHeader(756);
+  return { content: c, rowY: 733 };
 }
 
 function makePdf(pages, bank) {
@@ -193,45 +201,51 @@ function makePdf(pages, bank) {
   const xref = pdf.length;
   pdf += `xref\n0 ${objects.length}\n0000000000 65535 f \n`;
   for (let id = 1; id < objects.length; id += 1) pdf += `${String(offsets[id]).padStart(10, '0')} 00000 n \n`;
-  pdf += `trailer\n<< /Size ${objects.length} /Root 1 0 R /Info << /Title ${pdfText(`Extracto de cuenta - ${bank}`)} /Author ${pdfText(bank)} >> >>\nstartxref\n${xref}\n%%EOF`;
+  pdf += `trailer\n<< /Size ${objects.length} /Root 1 0 R /Info << /Title ${pdfText(`Documento de prueba: saldo de referencia - ${bank}`)} /Author ${pdfText(bank)} >> >>\nstartxref\n${xref}\n%%EOF`;
   return Uint8Array.from(pdf, (char) => char.charCodeAt(0));
 }
 
-/** Cria um extrato PDF com valores em centavos e dados da conta informados pelo app. */
-export function buildStatementPdf({ rows, currency, from, to, opening, credits, debits, closing, holder, account, bank, address, bic, reference }) {
+/** Cria um PDF com os dados da conta selecionada no app. */
+export function buildStatementPdf({ rows, currency, from, to, closing, holder, holderAddress, account, bank, address, bic, reference }) {
   const pages = [];
   let pageIndex = 0;
-  let page = pageHeader({ pageIndex, currency, from, to, holder, account, bank, address, bic });
-  let content = page.content + summary({ opening, credits, debits, closing, currency });
+  let page = pageHeader({ pageIndex, currency, from, to, holder, holderAddress, account, bank, address, bic, closing });
+  let content = page.content;
   let y = page.rowY;
-  if (!rows.length) content += text(LEFT + 5, y, 'No hay movimientos durante este período.', 9, 'F1', '000000');
+
+  if (!rows.length) {
+    content += text(LEFT + 2, 392, 'Saldo fijo de referencia para pruebas; no procede de una conexión bancaria.', 8.5, 'F1', INK);
+    content += text(LEFT + 2, 379, 'Este documento no es un extracto bancario ni acredita titularidad o disponibilidad de fondos.', 8.5, 'F1', INK);
+  }
+
   rows.forEach((row) => {
-    if (y < 67) {
+    if (y < 64) {
       pages.push(content);
       pageIndex += 1;
-      page = pageHeader({ pageIndex, currency, from, to, holder, account, bank, address, bic });
+      page = pageHeader({ pageIndex, currency, from, to, holder, holderAddress, account, bank, address, bic, closing });
       content = page.content;
       y = page.rowY;
     }
-    const date = localDate(row.at);
-    const valueDate = localDate(row.valueDate || row.at);
-    const description = shorten([translateMovement(row.title), translateMovement(row.subtitle)].filter(Boolean).join(' · '));
-    const amount = fmt(Math.abs(row.signedCents), currency);
-    content += text(LEFT + 5, y, date, 7.2, 'F1', '000000');
-    content += text(LEFT + 58, y, valueDate, 7.2, 'F1', '000000');
-    content += text(LEFT + 130, y, description, 7.5, 'F1', '000000');
-    if (row.signedCents > 0) content += rightText(421, y, amount, 7.2, 'F1', '000000');
-    if (row.signedCents < 0) content += rightText(485, y, amount, 7.2, 'F1', '000000');
-    content += rightText(RIGHT - 5, y, fmt(row.balanceCents, currency), 7.6, 'F1', '000000');
+    const description = shorten(
+      [localDate(row.at), translateMovement(row.title), translateMovement(row.subtitle)]
+        .filter(Boolean)
+        .join(' \u00b7 '),
+      75,
+    );
+    const amount = formatStatementNumber(row.signedCents);
+    content += text(LEFT + 2, y, description, 7.8, 'F1', INK);
+    if (row.signedCents > 0) content += rightText(421, y, amount, 7.8, 'F1', INK);
+    if (row.signedCents < 0) content += rightText(490, y, amount, 7.8, 'F1', INK);
+    content += rightText(RIGHT - 3, y, formatStatementNumber(row.balanceCents), 7.8, 'F1', INK);
     content += line(LEFT, y - 7, RIGHT, y - 7, 'e7eae8', 0.35);
     y -= 17;
   });
   pages.push(content);
   pages.forEach((pageContent, index) => {
     pages[index] = pageContent
-      + text(LEFT, 22, `Referencia: ${reference}`, 7.2, 'F1', '000000')
-      + line(LEFT, 36, RIGHT, 36, 'dfe3e5', 0.5)
-      + rightText(RIGHT, 22, `Página ${index + 1} / ${pages.length}`, 7.2, 'F1', '000000');
+      + text(LEFT, 22, `Referencia: ${reference}`, 7.2, 'F1', MUTED)
+      + line(LEFT, 36, RIGHT, 36, RULE, 0.5)
+      + rightText(RIGHT, 22, `P\u00e1gina ${index + 1} / ${pages.length}`, 7.2, 'F1', INK);
   });
   return makePdf(pages, bank);
 }

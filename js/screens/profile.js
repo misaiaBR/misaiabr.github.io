@@ -51,7 +51,7 @@ export const screens = {
           </div>
           <button class="row" data-open="eur">
             <span class="lead">${icon('euro')}</span>
-            <span class="main"><span class="t">Conta em euro</span><span class="s">IBAN ${esc(ibanMasked(s.accounts.eur.iban))}</span></span>
+            <span class="main"><span class="t">Conta em euro · referência de teste</span><span class="s">IBAN ${esc(ibanMasked(s.accounts.eur.iban))}</span></span>
             <span class="trailing num">${money(s.accounts.eur.cashCents, 'EUR')}</span>
           </button>
           <button class="row" data-open="boxes">
