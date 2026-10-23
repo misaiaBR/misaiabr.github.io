@@ -100,7 +100,7 @@ export const screens = {
               </button>
               <button class="acct" data-go="card">
                 <span class="flag">${icon('card')}</span>
-                <span class="a-val num">${bothCurrencies(s.card.limitCents, 'BRL').eur}</span>
+                <span class="a-main"><span class="a-name">Limite do cart&#227;o</span><span class="a-val num">${bothCurrencies(s.card.limitCents, 'BRL').eur}</span></span>
                 ${icon('chevron', 'go')}
               </button>
             </div>
