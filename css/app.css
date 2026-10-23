@@ -844,35 +844,17 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--brand);
   color: var(--brand-ink);
 }
+/* A "orelha" da aba: uma peça só, recortada por um caminho — o filete encosta na linha de
+   baixo da barra e na lateral da orelha na mesma tangente, então não degrau. */
 .wallet-tab .lobe {
   position: absolute;
   left: 50%;
-  bottom: -23px;
+  top: calc(100% - 1px);
   transform: translateX(-50%);
-  width: 124px;
-  height: 24px;
-  border-radius: 0 0 10px 10px;
+  width: 142px;
+  height: 28px;
   background: var(--brand);
-}
-/* os dois filetes: quarto de círculo de verde com o centro no canto onde a barra
-   encontra a orelha. A altura do filete (12) bate com o ponto em que a orelha começa a
-   arredondar embaixo, então a curva continua sem degrau. Sobem 1 px para dentro da barra
-   para não aparecer costura. */
-.wallet-tab .lobe::before,
-.wallet-tab .lobe::after {
-  content: "";
-  position: absolute;
-  top: -1px;
-  width: 12px;
-  height: 12px;
-}
-.wallet-tab .lobe::before {
-  left: -12px;
-  background: radial-gradient(circle at 100% 0, var(--brand) 12px, transparent 12.5px);
-}
-.wallet-tab .lobe::after {
-  right: -12px;
-  background: radial-gradient(circle at 0 0, var(--brand) 12px, transparent 12.5px);
+  clip-path: path("M0 0 A16 16 0 0 1 16 16 A12 12 0 0 0 28 28 L114 28 A12 12 0 0 0 126 16 A16 16 0 0 1 142 0 Z");
 }
 [data-theme="light"] .wallet-tab { color: #fff; }
 .wallet-body { border-radius: 0 0 24px 24px; padding: 32px 14px 14px; }
