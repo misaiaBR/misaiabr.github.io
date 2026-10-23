@@ -881,7 +881,13 @@ input[type="range"]::-webkit-slider-thumb {
 /* No app da Tela de Início, a barra fica logo acima da área do indicador, como na Wise. */
 .ios-standalone { --bar-gap: 12px; }
 .tabbar { background: transparent; border-top: 0; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0 20px; align-items: flex-start; }
-.tabbar { height: calc(var(--tab-h) + var(--bar-gap) + var(--sab) + var(--badge-lift, 0px)); }
+.ios-standalone .tabbar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.ios-standalone .tabbar { height: calc(var(--tab-h) + var(--bar-gap) + var(--sab) + var(--badge-lift, 0px)); }
 .tabbar::before {
   content: "";
   position: absolute;
