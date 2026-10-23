@@ -50,6 +50,11 @@ function readDateInput(value) {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null;
 }
 
+function createStatementReference() {
+  return globalThis.crypto?.randomUUID?.()
+    || `${Date.now().toString(16)}${Math.random().toString(16).slice(2, 14)}`;
+}
+
 function statementData(currency, from, to) {
   const start = new Date(from);
   start.setHours(0, 0, 0, 0);
@@ -105,7 +110,7 @@ function openStatementExport() {
           <div class="field"><label for="statement-from">Data inicial</label><input id="statement-from" type="date" value="${dateInputValue(startOfMonth)}" max="${todayValue}"></div>
           <div class="field"><label for="statement-to">Data final</label><input id="statement-to" type="date" value="${todayValue}" max="${todayValue}"></div>
         </div>
-        <div class="field-hint">O PDF usa as movimentações salvas neste aparelho. Documento demonstrativo, não emitido por uma instituição financeira.</div>
+        <div class="field-hint">O PDF inclui as movimentações e os dados da conta salvos neste aparelho.</div>
         <button class="btn primary" type="button" data-create-statement>${icon('download')} Gerar extrato PDF</button>
       </div>
     </div>`);
@@ -122,7 +127,7 @@ function openStatementExport() {
 
     const totals = statementData(currency, from, to);
     const account = currency === 'EUR'
-      ? `IBAN ${S().accounts.eur.iban || BANK.eurIbanDisplay}`
+      ? (S().accounts.eur.iban || BANK.eurIbanDisplay)
       : BANK.accountDisplay;
     const pdf = buildStatementPdf({
       ...totals,
@@ -132,6 +137,9 @@ function openStatementExport() {
       holder: S().profile.name,
       account,
       bank: BANK.short,
+      address: BANK.address,
+      bic: currency === 'EUR' ? BANK.eurBic : '',
+      reference: createStatementReference(),
     });
     const blob = new Blob([pdf], { type: 'application/pdf' });
     const file = new File([blob], `ipe-extrato-${currency.toLowerCase()}-${dateInputValue(from)}-${dateInputValue(to)}.pdf`, { type: 'application/pdf' });

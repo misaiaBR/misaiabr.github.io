@@ -11,6 +11,12 @@ export const SITE_PATH = '/contas/conta-corrente/';
 export const BANK = {
   name: APP_NAME,
   short: 'Ipê',
+  address: [
+    'Alameda Grajaú, 614 - Sala 904',
+    'Alphaville Industrial',
+    'Barueri - SP',
+    'CEP 06454-050',
+  ],
   code: '819', // código da instituição — 819 está livre na lista do Bacen
   ispb: '99999999', // ISPB usado no E2E dos comprovantes
   agency: '0001',
