@@ -385,15 +385,26 @@ function installBackGesture() {
   shell.app.addEventListener('pointercancel', finish);
 }
 
-/** No app instalado, o iOS devolve `innerHeight` descontando a faixa do indicador da
- *  casa: com a altura fixada nisso, sobrava uma faixa preta embaixo da barra de abas —
- *  só no ícone da Tela de Início, nunca no Safari. Ali quem manda é o `100dvh` do CSS. */
+/** Detecta a janela independente, incluindo o modo Tela de Início legado do iOS. */
 function estaInstalado() {
   return Boolean(window.matchMedia?.('(display-mode: standalone)')?.matches) || navigator.standalone === true;
 }
 
+function estaInstaladoIos() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return ios && estaInstalado();
+}
+
 export function setViewportHeight() {
   const root = document.documentElement;
+  if (estaInstaladoIos()) {
+    // A viewport do PWA iOS termina antes da área do indicador. Como a barra já
+    // reserva esse safe area, estendemos o shell pelo mesmo inset para não contá-lo
+    // duas vezes e deixar uma faixa preta sob a navegação.
+    root.style.setProperty('--h', 'calc(100dvh + env(safe-area-inset-bottom, 0px))');
+    return;
+  }
   if (estaInstalado()) {
     root.style.removeProperty('--h');
     return;
