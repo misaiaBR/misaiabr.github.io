@@ -1,5 +1,5 @@
 // Service worker: instala o app completo e deixa tudo funcionando sem internet.
-const VERSION = 'ipe-banco-1.5.18-2026.10.23-1';
+const VERSION = 'ipe-banco-1.5.19-2026.10.23-1';
 const CACHE = `ipe-${VERSION}`;
 
 const CORE = [

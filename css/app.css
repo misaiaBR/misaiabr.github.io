@@ -754,7 +754,7 @@ input[type="range"]::-webkit-slider-thumb {
 .cur-toggle button.on { background: #fff; color: #0a5738; }
 
 /* ---------------- Início: banco internacional ---------------- */
-.total { padding: 16px 16px 2px; }
+.total { padding: 16px 0 2px; }
 .total .label { font-size: 13.5px; color: var(--text-2); }
 .total-line { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
 .total-line .value { font-size: 31px; font-weight: 700; letter-spacing: -0.9px; font-variant-numeric: tabular-nums; }
@@ -770,7 +770,7 @@ input[type="range"]::-webkit-slider-thumb {
 [data-theme="dark"] .total-line .cur-toggle button.on { background: var(--card-2); }
 
 .pills {
-  display: flex; gap: 8px; overflow-x: auto; padding: 16px 16px 4px;
+  display: flex; gap: 8px; overflow-x: auto; padding: 16px 0 4px;
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
 .pills::-webkit-scrollbar { display: none; }
@@ -786,7 +786,7 @@ input[type="range"]::-webkit-slider-thumb {
 [data-theme="dark"] .pill { background: var(--card-2); border-color: transparent; }
 [data-theme="dark"] .pill.primary { background: var(--brand); color: #fff; }
 
-.wallet { margin: 20px 16px 0; }
+.wallet { margin: 20px 0 0; }
 .wallet-tab {
   display: flex; align-items: center; gap: 5px; width: 100%; text-align: left;
   padding: 13px 16px; border-radius: 16px 16px 0 0;
@@ -821,7 +821,7 @@ input[type="range"]::-webkit-slider-thumb {
 [data-theme="dark"] .chip-btn { background: rgba(255,255,255,0.08); }
 .chip-btn svg { width: 15px; height: 15px; }
 
-.sec-head { display: flex; align-items: baseline; justify-content: space-between; padding: 24px 16px 9px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; padding: 24px 0 9px; }
 .sec-head b { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
 .sec-head .link { font-size: 14px; font-weight: 600; color: var(--brand); text-decoration: underline; }
 
