@@ -1108,7 +1108,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ---------------- blocos usados pelas telas ---------------- */
 
-.hero { padding: calc(var(--sat) + 10px) 0 6px; }
+.hero { padding: calc(var(--sat) + 24px) 0 6px; }
 .hero-row { display: flex; align-items: center; gap: 10px; }
 .hero .avatar {
   width: 40px; height: 40px; border-radius: 50%;
