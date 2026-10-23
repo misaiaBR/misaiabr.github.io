@@ -2,7 +2,7 @@
 import * as store from './logic/store.js';
 import { SITE_PATH } from './logic/rules.js';
 import * as Router from './ui/router.js';
-import { cancelAuthorize, toast } from './ui/shared.js';
+import { cancelAuthorize } from './ui/shared.js';
 import { screens as auth } from './screens/auth.js';
 import { screens as home } from './screens/home.js';
 import { screens as statement } from './screens/statement.js';
@@ -67,11 +67,6 @@ function watchLock() {
     }
   });
   ['pointerdown', 'keydown'].forEach((evt) => window.addEventListener(evt, trackActivity, { passive: true }));
-}
-
-function watchNetwork() {
-  window.addEventListener('offline', () => toast('Você ficou sem internet — o app continua funcionando.'));
-  window.addEventListener('online', () => toast('De volta à rede. O app continua 100% local.'));
 }
 
 function registerServiceWorker() {
@@ -257,7 +252,6 @@ export function start() {
   gate();
   applyFlowParam();
   watchLock();
-  watchNetwork();
   watchBadge();
   registerServiceWorker();
   const boot = document.getElementById('boot');
