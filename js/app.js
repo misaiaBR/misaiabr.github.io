@@ -82,8 +82,12 @@ function registerServiceWorker() {
   // versão nova; o estado da conta está no aparelho e não é perdido com o reload.
   let dono = navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (dono === navigator.serviceWorker.controller) return;
-    dono = navigator.serviceWorker.controller;
+    const novo = navigator.serviceWorker.controller;
+    // primeira tomada de controle (app recém-instalado): o documento já veio da rede,
+    // recarregar seria só um flash a mais
+    const primeiraVez = !dono;
+    dono = novo;
+    if (primeiraVez) return;
     window.location.reload();
   });
   navigator.serviceWorker.register('/sw.js', { scope: '/' }).then((reg) => {
