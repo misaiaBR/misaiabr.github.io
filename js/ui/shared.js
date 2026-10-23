@@ -272,12 +272,15 @@ export function txRow(tx, onClick) {
   const meta = txMeta(tx.type);
   const incoming = store.signedAmount(tx) > 0;
   const outgoing = store.signedAmount(tx) < 0;
+  const transfer = ['pix_out', 'manual_out', 'sepa_out'].includes(tx.type);
+  const receivedTransfer = incoming && ['pix_in', 'deposit', 'refund_in'].includes(tx.type);
+  const txIcon = transfer ? 'arrowUp' : receivedTransfer ? 'arrowDown' : meta.icon;
   const signed = outgoing ? '-' : incoming ? '+' : '';
   const amount = show(Math.abs(tx.amountCents), tx.currency || 'BRL');
   const hint = otherHint(tx.amountCents, tx.currency || 'BRL');
   const node = el(`
     <button class="tx" type="button">
-      <span class="glyph ${incoming ? 'in' : ''}">${icon(meta.icon)}</span>
+      <span class="glyph ${incoming ? 'in' : ''}">${icon(txIcon)}</span>
       <span class="main">
         <span class="t">${esc(tx.title || meta.label)}</span>
         <span class="s">${esc(tx.subtitle || new Date(tx.at).toLocaleDateString('pt-BR'))}${tx.status === 'scheduled' ? ' • agendado' : tx.status === 'failed' ? ' • não enviado' : ''}</span>
