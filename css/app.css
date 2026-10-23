@@ -32,6 +32,9 @@
   --tab-h: 56px;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
+  /* a barra flutuante fica a 16 px da borda de baixo — o indicador da casa mora nessa
+     faixa, como nas barras flutuantes do iOS; não é vão vazio, é a margem da pílula */
+  --bar-gap: max(16px, calc(var(--sab) - 18px));
   --h: 100dvh;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-pop: 0 24px 60px rgba(0, 0, 0, 0.28);
@@ -213,7 +216,7 @@ svg { display: block; }
 .tabbar {
   position: relative;
   flex: 0 0 auto;
-  height: calc(var(--tab-h) + var(--sab) + var(--badge-lift, 0px));
+  height: calc(var(--tab-h) + var(--bar-gap) + var(--badge-lift, 0px));
   padding-bottom: 0;
   display: flex;
   background: color-mix(in srgb, var(--bg-elev) 82%, transparent);
@@ -887,7 +890,7 @@ input[type="range"]::-webkit-slider-thumb {
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: calc(var(--sab) + var(--badge-lift, 0px));
+  bottom: calc(var(--bar-gap) + var(--badge-lift, 0px));
   height: var(--tab-h);
   border-radius: 28px;
   background: color-mix(in srgb, var(--card) 88%, transparent);
@@ -921,7 +924,7 @@ input[type="range"]::-webkit-slider-thumb {
 .wallet { --wallet-body: var(--card); }
 [data-theme="dark"] .wallet { --wallet-body: var(--card-2); }
 /* o corpo da tela precisa respirar acima da barra flutuante */
-.screen.with-tabbar .scroll { padding-bottom: calc(var(--tab-h) + var(--sab) + var(--badge-lift, 0px) + 22px); }
+.screen.with-tabbar .scroll { padding-bottom: calc(var(--tab-h) + var(--bar-gap) + var(--badge-lift, 0px) + 22px); }
 
 /* ícones circulares e contornados nas transações */
 .tx .glyph {
