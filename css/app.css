@@ -852,10 +852,10 @@ input[type="range"]::-webkit-slider-thumb {
   left: 50%;
   top: calc(100% - 1px);
   transform: translateX(-50%);
-  width: 142px;
-  height: 28px;
+  width: 108px;
+  height: 24px;
   background: var(--brand);
-  clip-path: path("M0 0 A16 16 0 0 1 16 16 A12 12 0 0 0 28 28 L114 28 A12 12 0 0 0 126 16 A16 16 0 0 1 142 0 Z");
+  clip-path: path("M0 0 A12 12 0 0 1 12 12 A12 12 0 0 0 24 24 L84 24 A12 12 0 0 0 96 12 A12 12 0 0 1 108 0 Z");
 }
 [data-theme="light"] .wallet-tab { color: #fff; }
 .wallet-body { border-radius: 0 0 24px 24px; padding: 32px 14px 14px; }
