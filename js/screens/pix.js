@@ -922,7 +922,7 @@ export const screens = {
           <div class="form">
             ${type === 'evp'
               ? `<div class="field"><label>Chave sugerida</label><input id="value" readonly value="${esc(value || makeEvpKey())}"></div><p class="field-hint">Gerada no aparelho: ninguém descobre quem você é olhando a chave.</p>`
-              : `<div class="field"><label for="value">${type === 'email' ? 'Seu e-mail' : 'Telefone com DDD'}</label><input id="value" type="${type === 'email' ? 'email' : 'tel'}" placeholder="${type === 'email' ? 'voce@email.com' : '(11) 90000-0000'}" value="${esc(value)}"></div>`}
+              : `<div class="field"><label for="value">${type === 'email' ? 'Seu e-mail' : 'Telefone com DDD'}</label><input id="value" type="${type === 'email' ? 'email' : 'tel'}" placeholder="${type === 'email' ? 'voce@email.com' : '(11) 97777-1024'}" value="${esc(value)}"></div>`}
             ${error ? `<div class="field-hint error">${esc(error)}</div>` : ''}
           </div>
         </div>

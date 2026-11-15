@@ -132,7 +132,7 @@ function openStatementExport() {
       from,
       to,
       holder: S().profile.name,
-      holderAddress: ['Endereço de demonstração', 'São Paulo', 'SP', '00000000', 'Brasil'],
+      holderAddress: ['Rua Jos\u00e9 Abel Galv\u00e3o', 'S\u00e3o Paulo', 'SP', '04811190', 'Brazil'],
       account: currency === 'EUR' ? account.replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim() : account,
       bank: BANK.short,
       address: BANK.address,
