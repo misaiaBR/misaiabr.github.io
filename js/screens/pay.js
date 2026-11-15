@@ -191,7 +191,7 @@ export const screens = {
           </div>
           <div class="field">
             <label for="ph">Número que vai receber</label>
-            <input id="ph" inputmode="tel" value="${esc(phone)}" placeholder="(11) 97777-1024">
+            <input id="ph" inputmode="tel" value="${esc(phone)}" placeholder="(11) 90000-0000">
           </div>
           ${error ? `<div class="field-hint error">${esc(error)}</div>` : ''}
           <div class="section-label">Quanto recarregar</div>
