@@ -31,14 +31,14 @@ export const BANK = {
 
 /** Titular da conta: criado no aparelho na primeira abertura e reposto em toda atualização. */
 export const DEFAULT_USER = {
-  name: 'Vitor Messias',
-  firstName: 'Vitor',
-  initials: 'VM',
-  cpf: '510.956.828-65',
-  cpfDigits: '51095682865',
-  email: 'm.vitormessias@gmail.com',
-  phone: '+55 (11) 97777-1024',
-  phoneKey: '+5511977771024',
+  name: 'Usuário Demo',
+  firstName: 'Usuário',
+  initials: 'UD',
+  cpf: '123.456.789-09',
+  cpfDigits: '12345678909',
+  email: 'demo@example.com',
+  phone: '+55 (11) 90000-0000',
+  phoneKey: '+5511900000000',
   password: '123456',
 };
 

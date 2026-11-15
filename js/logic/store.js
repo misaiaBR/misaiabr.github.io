@@ -483,7 +483,7 @@ function seed(state) {
   push({ type: 'fx_buy', amountCents: 584_16, at: iso(daysAgo(60, 10)), title: 'Compra de euros', subtitle: `Saída de ${fmt(584_16, 'BRL')}`, currency: 'BRL', details: fxSeedDetails });
   push({ type: 'fx_credit_eur', amountCents: 10_000, at: iso(daysAgo(60, 10)), title: 'Entrada de euros', subtitle: 'Câmbio CTR-9931746210', currency: 'EUR', details: fxSeedDetails });
   push({ type: 'deposit', amountCents: DEMO_EUR_CENTS - 10_000, at: iso(daysAgo(45, 15)), title: 'Depósito em euros', subtitle: 'Recebido de Lisboa', currency: 'EUR', details: { holder: 'Studio Alfama', simulated: false } });
-  push({ type: 'recharge', amountCents: 3_000, at: iso(daysAgo(57, 12)), title: 'Recarga de celular', subtitle: 'Vivo • (11) 97777-1024', details: { operator: 'Vivo', phone: '+5511977771024', creditsCents: 2_400 } });
+  push({ type: 'recharge', amountCents: 3_000, at: iso(daysAgo(57, 12)), title: 'Recarga de celular', subtitle: `Vivo • ${DEFAULT_USER.phone}`, details: { operator: 'Vivo', phone: DEFAULT_USER.phoneKey, creditsCents: 2_400 } });
   push({ type: 'card_purchase', amountCents: 17_800, at: iso(daysAgo(52, 19)), title: 'Restaurante Tanjão', subtitle: 'Crédito à vista' });
   push({ type: 'card_payment', amountCents: 61_700, at: iso(daysAgo(50, 9)), title: 'Pagamento da fatura', subtitle: 'Fatura de setembro', details: { invoiceId: 'inv_set' } });
   push({ type: 'box_deposit', amountCents: 15_000, at: iso(daysAgo(46, 16)), title: 'Aporte na caixinha', subtitle: 'Viagem', details: { boxId: 'box_viagem' } });
